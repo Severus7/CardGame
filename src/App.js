@@ -21,8 +21,11 @@ function App() {
   const [numC, setNumC] = useState(Math.floor(Math.random() * 10) + 1);
   const [round, setRound] = useState(0);
   const [input, setInput] = useState("");
-  const [correctAnswer, setCorrectAnswer] = useState(
+  const [correctAnswerA, setCorrectAnswerA] = useState(
     (numC >= numA && numC <= numB) || (numC <= numA && numC >= numB)
+  );
+  const [correctAnswerB, setCorrectAnswerB] = useState(
+    numC > numA || numC > numB //Higher true
   );
   const [choice, setChoice] = useState("Higher or Lower?");
 
@@ -45,13 +48,23 @@ function App() {
     setRound(round + 1);
 
     if (numA === numB) {
-      console.log("Hello");
+      if (input === "HIGHER" && correctAnswerB) {
+        alert(
+          `Card 3 is ${numC}, and is higher than Card 1 and Card 2. You won!`
+        );
+      } else if (input === "LOWER" && !correctAnswerB) {
+        alert(
+          `Card 3 is ${numC}, and is lower than Card 1 and Card 2. You won!`
+        );
+      } else {
+        alert("You losT! HAHAHAHA Weakshit");
+      }
     } else {
-      if (input === "DEAL" && correctAnswer) {
+      if (input === "DEAL" && correctAnswerA) {
         alert(
           `Card 3 is ${numC}, and is in-between ${numA} and ${numB}. You won!`
         );
-      } else if (input === "NO DEAL" || correctAnswer) {
+      } else if (input === "NO DEAL" || correctAnswerA) {
         alert(
           `Card 3 is ${numC}, and is not in-between ${numA} and ${numB}. You won!`
         );
@@ -70,7 +83,7 @@ function App() {
   };
 
   console.log(numC);
-  console.log(correctAnswer);
+  console.log(correctAnswerA);
 
   // const test = (e) => {
   //   e.preventDefault();

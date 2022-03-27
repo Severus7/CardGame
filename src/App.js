@@ -20,6 +20,7 @@ function App() {
   const [numA, setNumA] = useState(Math.floor(Math.random() * 10) + 1);
   const [numC, setNumC] = useState(Math.floor(Math.random() * 10) + 1);
   const [round, setRound] = useState(0);
+  const [points, setPoints] = useState(0);
   const [input, setInput] = useState("");
   const [correctAnswerA, setCorrectAnswerA] = useState(
     (numC >= numA && numC <= numB) || (numC <= numA && numC >= numB)
@@ -27,109 +28,73 @@ function App() {
   const [correctAnswerB, setCorrectAnswerB] = useState(
     numC > numA || numC > numB //Higher true
   );
-  const [choice, setChoice] = useState("Higher or Lower?");
 
-  if (numA === numB) {
-    console.log(choice);
-  }
-
-  useEffect(() => {
-    if (numA === numB) {
-      console.log(choice);
-    } else {
-      setChoice("Deal or No Deal?");
-    }
-  }, []);
+  const reload = () => {
+    setNumA(Math.floor(Math.random() * 10) + 1);
+    setNumB(Math.floor(Math.random() * 10) + 1);
+  };
 
   const test = (e) => {
     e.preventDefault();
 
-    setNumC(Math.floor(Math.random() * 10) + 1);
-    setRound(round + 1);
+    if (round < 5) {
+      setNumC(Math.floor(Math.random() * 10) + 1);
+      setRound(round + 1);
 
-    if (numA === numB) {
-      if (input === "HIGHER" && correctAnswerB) {
-        alert(
-          `Card 3 is ${numC}, and is higher than Card 1 and Card 2. You won!`
-        );
-      } else if (input === "LOWER" && !correctAnswerB) {
-        alert(
-          `Card 3 is ${numC}, and is lower than Card 1 and Card 2. You won!`
-        );
+      if (numA === numB) {
+        if (input.toLowerCase() === "higher" && correctAnswerB) {
+          alert(
+            `Card 3 is ${numC}, and is higher than Card 1 and Card 2. You won!`
+          );
+          setPoints(points + 1);
+          reload();
+        } else if (input.toLowerCase() === "lower" && !correctAnswerB) {
+          alert(
+            `Card 3 is ${numC}, and is lower than Card 1 and Card 2. You won!`
+          );
+          setPoints(points + 1);
+          reload();
+        } else {
+          alert(`Card 3 is ${numC}! You Lost!`);
+          reload();
+        }
       } else {
-        alert("You losT! HAHAHAHA Weakshit");
+        if (
+          input.toLowerCase() === "deal" &&
+          ((numC >= numA && numC <= numB) || (numC <= numA && numC >= numB))
+        ) {
+          console.log(input.toLowerCase());
+          alert(
+            `Card 3 is ${numC}, and is in-between ${numA} and ${numB}. You won!`
+          );
+          setPoints(points + 1);
+          reload();
+        } else if (
+          input.toLowerCase() === "no deal" &&
+          !((numC >= numA && numC <= numB) || (numC <= numA && numC >= numB))
+        ) {
+          console.log(input.toLowerCase());
+          alert(
+            `Card 3 is ${numC}, and is not in-between ${numA} and ${numB}. You won!`
+          );
+          setPoints(points + 1);
+          reload();
+        } else {
+          console.log(input.toLowerCase());
+          alert(`Card 3 is ${numC}! You Lost!`);
+          reload();
+        }
       }
     } else {
-      if (input === "DEAL" && correctAnswerA) {
-        alert(
-          `Card 3 is ${numC}, and is in-between ${numA} and ${numB}. You won!`
-        );
-      } else if (input === "NO DEAL" || correctAnswerA) {
-        alert(
-          `Card 3 is ${numC}, and is not in-between ${numA} and ${numB}. You won!`
-        );
-      } else {
-        alert("You lost! HAHAHA weakshit");
-      }
+      alert("Game is over!, Your score is " + points);
+      setRound(0);
+      setPoints(0);
     }
-
-    // if (input === "NO DEAL" && correctAnswer) {
-    //   alert(
-    //     `Card 3 is ${numC}, and is not in-between ${numA} and ${numB}. You won!`
-    //   );
-    // } else {
-    //   alert("You lost! HAHAHA weakshit");
-    // }
   };
-
-  console.log(numC);
-  console.log(correctAnswerA);
-
-  // const test = (e) => {
-  //   e.preventDefault();
-  //   if (input) {
-  //     console.log(input);
-  //   }
-  //   setNumC(Math.floor(Math.random() * 10) + 1);
-  //   setRound(round + 1);
-  //   if ((numC >= numA && numC <= numB) || (numC <= numA && numC >= numB)) {
-  //     // console.log(numC + ' is between ' + numA + ' and ' + numB);
-  //     alert(
-  //       "Card 3: " +
-  //         numC +
-  //         " is between " +
-  //         numA +
-  //         " and " +
-  //         numB +
-  //         ", You won!"
-  //     );
-  //     setNumA(Math.floor(Math.random() * 10) + 1);
-  //     setNumB(Math.floor(Math.random() * 10) + 1);
-  //   } else {
-  //     // console.log(numC + ' is not in between ' + numA + ' and ' + numB);
-  //     alert(
-  //       "Card 3: " +
-  //         numC +
-  //         " is not in between " +
-  //         numA +
-  //         " and " +
-  //         numB +
-  //         ", You won!"
-  //     );
-  //     setNumA(Math.floor(Math.random() * 10) + 1);
-  //     setNumB(Math.floor(Math.random() * 10) + 1);
-  //   }
-  // };
-
-  // const reset = () => {
-  //   setNumA(Math.floor(Math.random() * 10) + 1);
-  //   setNumB(Math.floor(Math.random() * 10) + 1);
-  //   setNumC(0);
-  // }
-
   return (
     <ThemeProvider theme={darkTheme}>
-      <p className="round">{round}</p>
+      <p className="round">Round: {round}</p>
+      <p className="round">Points: {points}</p>
       <Container sx={{ mt: 10 }}>
         <Grid container spacing={10}>
           <Grid item lg={6} md={6} xs={12}>
@@ -145,11 +110,12 @@ function App() {
       <Grid
         container
         direction="column"
+        W
         sx={{ marginTop: 10, textAlign: "center" }}
       >
         <Grid item>
           <Typography color="primary" gutterBottom>
-            {choice}
+            What is your guess? (Deal, No Deal, Higher, Lower)
           </Typography>
         </Grid>
         <Grid item container sx={{ display: "flex", justifyContent: "center" }}>
